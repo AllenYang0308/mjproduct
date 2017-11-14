@@ -1,0 +1,117 @@
+<html>
+    <head>
+        <title>MuJi Product List</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <style type="text/css">
+            a.export, a.export:visited {
+                text-decoration: none;
+                color:#000;
+                background-color:#ddd;
+                border: 1px solid #ccc;
+                padding:8px;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+        $(document).ready(function () {
+
+            function exportTableToCSV($table, filename) {
+
+                //var $rows = $table.find('.showT'),
+                //var $rows = $("table:not(.hideT)"),
+                //var $rows = $(".showT"),
+                var $rows = $table.find('tr:has(td)'),
+
+                    // Temporary delimiter characters unlikely to be typed by keyboard
+                    // This is to avoid accidentally splitting the actual contents
+                    tmpColDelim = String.fromCharCode(11), // vertical tab character
+                    tmpRowDelim = String.fromCharCode(0), // null character
+
+                    // actual delimiter characters for CSV format
+                    colDelim = '","',
+                    rowDelim = '"\r\n"',
+
+                    // Grab text from table into CSV formatted string
+                    csv = '"' + $rows.map(function (i, row) {
+                        var $row = $(row),
+                            $cols = $row.find('td');
+
+                        return $cols.map(function (j, col) {
+                            var $col = $(col),
+                                text = $col.text();
+
+                            return text.replace(/"/g, '""'); // escape double quotes
+
+                        }).get().join(tmpColDelim);
+
+                    }).get().join(tmpRowDelim)
+                        .split(tmpRowDelim).join(rowDelim)
+                        .split(tmpColDelim).join(colDelim) + '"',
+
+                    // Data URI
+                    csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
+
+                $(this)
+                    .attr({
+                    'download': filename,
+                        'href': csvData,
+                        'target': '_blank'
+                });
+            }
+            
+            // This must be a hyperlink 
+            // Modify by Allen Yang
+             $(".export").on('click', function (event) {
+                 // CSV
+                 exportTableToCSV.apply(this, [$('#dvData>table'), 'export.csv']);
+
+                 // IF CSV, don't do event.preventDefault() or return false
+                 // We actually need this to be a typical hyperlink
+             });
+        });
+        </script>
+        <style>
+        table, th , td  {
+          border: 1px solid grey;
+          border-collapse: collapse;
+          padding: 5px;
+        }
+        table tr:nth-child(odd)	{
+          background-color: #f1f1f1;
+        }
+        table tr:nth-child(even) {
+          background-color: #ffffff;
+        }
+        </style>
+        <form action="/product/search/" method="POST">
+            <p>請輸入產品條碼號：</p><input type="text" name="barcode">
+            <input type="submit" value="Search">
+        </form>
+        <div id="dvData">
+            {{ if .Prod }}
+            <table class="showT" border="1" align="left">
+                <tr class="showT">
+                    <td class="hideT"></td>
+                    <td class="showT">商品名稱</td>
+                    <td class="showT">數量</td>
+                    <td class="showT">商品價格</td>
+                    <td class="showT">商品編號</td>
+                    <td class="showT">商品條碼</td>
+                </tr>
+                <tr class="showT">
+                {{ range .Prod }}
+                    <td class="hideT"><a href="#">刪除</td>
+                    <td class="showT">{{ .ProductName }}</td>
+                    <td class="showT">1</td>
+                    <td class="showT">{{ .ProductPrice }}</td>
+                    <td class="showT">{{ .ProductMid }}</td>
+                    <td class="showT">{{ .ProductCode }}</td>
+                </tr>
+                {{ end }}
+            </table>
+            <a href="#" class="export">Export Table data into Excel</a>
+            {{ end }}
+        </div>
+    </body>
+</html>
