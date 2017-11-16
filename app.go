@@ -26,7 +26,7 @@ func FindString(bts [][]byte, srange int) []string {
 func show(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	db, err := gorm.Open("sqlite3", "test.db")
+	db, err := gorm.Open("sqlite3", "product.db")
 	if err != nil {
 		panic("Failed to connect database.")
 	}
@@ -63,7 +63,7 @@ func delete(w http.ResponseWriter, r *http.Request) {
 	product_id := vars["id"]
 
 	var product models.Product
-	db, err := gorm.Open("sqlite3", "test.db")
+	db, err := gorm.Open("sqlite3", "product.db")
 	if err != nil {
 		panic("Failed to connect database.")
 	}
@@ -79,7 +79,7 @@ func delete(w http.ResponseWriter, r *http.Request) {
 func search(w http.ResponseWriter, r *http.Request) {
 
 	// NOTE: For test gorm data store.
-	db, err := gorm.Open("sqlite3", "test.db")
+	db, err := gorm.Open("sqlite3", "product.db")
 	if err != nil {
 		panic("Failed to connect database.")
 	}
