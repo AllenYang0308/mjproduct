@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -14,7 +13,6 @@ import (
 	"log"
 	"net/url"
 	"regexp"
-	//"strings"
 )
 
 func FindString(bts [][]byte, srange int) []string {
@@ -63,7 +61,6 @@ func show(w http.ResponseWriter, r *http.Request) {
 func delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	product_id := vars["id"]
-	fmt.Println(product_id)
 
 	var product models.Product
 	db, err := gorm.Open("sqlite3", "test.db")
@@ -72,7 +69,6 @@ func delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	db.First(&product, product_id)
-	fmt.Println(product)
 	db.Delete(&product)
 
 	http.Redirect(w, r, "/show", http.StatusFound)
@@ -101,9 +97,7 @@ func search(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Println("apiparam: ", apiparam)
 	apiurl = "http://www.muji.tw/item_detail.aspx?CatID=1&PdtID=2&" + apiparam.Encode()
-	fmt.Println("apiurl: ", apiurl)
 	res, err := http.Get(apiurl)
 	if err != nil {
 		panic(err)
@@ -114,7 +108,7 @@ func search(w http.ResponseWriter, r *http.Request) {
 	pattern := make(map[string]string)
 
 	pattern["prod_name"] = `<li\sclass="[a-z]+">\s+<h3>(.*?)</h3>\s*</li>`
-	pattern["prod_desc"] = `<li\sclass="[a-z]+">\s+<h3>.*?</h3>\s*</li>\s*<li>(.*?)</li>`
+	pattern["prod_desc"] = pattern["prod_name"] + `\s*<li>(.*?)</li>`
 	pattern["prod_price"] = `<ol>\s*<li\sclass="[a-z]+">.*\p{Han}+.*>(\d+).*\s*<li.*>\p{Han}+.*>\d+</li>`
 	pattern["prod_code"] = `<ol>\s*<li\sclass="[a-z]+">.*\p{Han}+.*>\d+.*\s*<li.*>\p{Han}+.*>(\d+)</li>`
 	pattern["prod_mid"] = `<p\sclass="num">\p{Han}+&nbsp;*(.*?)</p>`

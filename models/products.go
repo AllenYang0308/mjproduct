@@ -3,7 +3,6 @@ package models
 import (
 	"bytes"
 	"encoding/gob"
-	//	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
