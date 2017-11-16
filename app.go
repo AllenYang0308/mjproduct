@@ -14,20 +14,8 @@ import (
 	"log"
 	"net/url"
 	"regexp"
+	//"strings"
 )
-
-//type Product struct {
-//	gorm.Model
-//	ProductName        string
-//	ProductPrice       string
-//	ProductDescription string
-//	ProductMid         string
-//	ProductCode        string
-//}
-//
-//type Products struct {
-//	Prod []Product
-//}
 
 func FindString(bts [][]byte, srange int) []string {
 	var rts []string
@@ -47,8 +35,20 @@ func show(w http.ResponseWriter, r *http.Request) {
 
 	var Prod models.Products
 	var prod []models.Product
+	//var prodModel models.ProductModel
+
 	db.Find(&prod)
-	Prod.Prod = prod
+	for _, v := range prod {
+		prodModel := models.ProductModel{
+			ProductName:        template.HTML(v.ProductName),
+			ProductPrice:       v.ProductPrice,
+			ProductDescription: template.HTML(v.ProductDescription),
+			ProductMid:         v.ProductMid,
+			ProductCode:        v.ProductCode,
+		}
+		Prod.Prod = append(Prod.Prod, prodModel)
+	}
+	//Prod.Prod = prod
 	t, _ := template.ParseFiles("./templates/index.html")
 	t = t.Funcs(gtf.GtfFuncMap)
 
