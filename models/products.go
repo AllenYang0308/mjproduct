@@ -19,6 +19,7 @@ type Product struct {
 }
 
 type ProductModel struct {
+	Id                 uint
 	ProductName        interface{}
 	ProductPrice       string
 	ProductDescription interface{}

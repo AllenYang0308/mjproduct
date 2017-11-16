@@ -40,6 +40,7 @@ func show(w http.ResponseWriter, r *http.Request) {
 	db.Find(&prod)
 	for _, v := range prod {
 		prodModel := models.ProductModel{
+			Id:                 v.ID,
 			ProductName:        template.HTML(v.ProductName),
 			ProductPrice:       v.ProductPrice,
 			ProductDescription: template.HTML(v.ProductDescription),
@@ -56,6 +57,26 @@ func show(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
+
+}
+
+func delete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	product_id := vars["id"]
+	fmt.Println(product_id)
+
+	var product models.Product
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("Failed to connect database.")
+	}
+
+	db.First(&product, product_id)
+	fmt.Println(product)
+	db.Delete(&product)
+
+	http.Redirect(w, r, "/show", http.StatusFound)
+	return
 
 }
 
@@ -143,5 +164,6 @@ func main() {
 	r.HandleFunc("/", show)
 	r.HandleFunc("/search", search)
 	r.HandleFunc("/show", show)
+	r.HandleFunc("/delete/{id:[0-9]+}", delete)
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

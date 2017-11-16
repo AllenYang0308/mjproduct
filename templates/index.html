@@ -103,7 +103,7 @@
                 </tr>
                 <tr class="showT">
                 {{ range .Prod }}
-                    <td class="hideT"><a href="#">刪除</td>
+                <td class="hideT"><a href="/delete/{{ .Id }}">刪除</td>
                     <td class="showT">{{ .ProductName }}</td>
                     <td class="showT">1</td>
                     <td class="showT">{{ .ProductPrice }}</td>
