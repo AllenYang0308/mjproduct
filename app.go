@@ -155,6 +155,7 @@ func search(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	r := mux.NewRouter()
+	r.HandleFunc("$", show)
 	r.HandleFunc("/", show)
 	r.HandleFunc("/search", search)
 	r.HandleFunc("/show", show)
